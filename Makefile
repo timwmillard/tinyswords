@@ -79,6 +79,8 @@ else ifeq ($(backend), dummy)
 	DEFS+=-DSOKOL_DUMMY_BACKEND
 endif
 
+.PHONY: all run clean update-deps
+
 all: $(TARGET)$(OUTEXT)
 
 $(TARGET)$(OUTEXT): src/main.c deps.o
@@ -86,6 +88,9 @@ $(TARGET)$(OUTEXT): src/main.c deps.o
 
 deps.o: src/deps.c
 	$(CC) -c $< $(INCS) $(DEFS) $(CFLAGS)
+
+run: $(TARGET)$(OUTEXT)
+	./$(TARGET)$(OUTEXT)
 
 clean:
 	rm -f $(TARGET)
