@@ -53,7 +53,7 @@ void init(void) {
     });
     
     state.bind.images[0] = sg_make_image(&(sg_image_desc){
-            });
+    });
 
     state.pip = sg_make_pipeline(&(sg_pipeline_desc){
         .shader = sg_make_shader(triangle_shader_desc(sg_query_backend())),
