@@ -79,11 +79,11 @@ else ifeq ($(backend), dummy)
 	DEFS+=-DSOKOL_DUMMY_BACKEND
 endif
 
-.PHONY: all run clean update-deps
+.PHONY: all run clean update-deps shaders
 
 all: $(TARGET)$(OUTEXT)
 
-$(TARGET)$(OUTEXT): src/main.c deps.o
+$(TARGET)$(OUTEXT): src/main.c deps.o src/shader_glsl.h
 	$(CC) -o $@ $< deps.o $(INCS) $(DEFS) $(CFLAGS) $(LIBS)
 
 deps.o: src/deps.c
@@ -107,4 +107,14 @@ update-deps:
 	wget -O include/stb_image.h https://raw.githubusercontent.com/nothings/stb/master/stb_image.h
 	wget -O include/sokol_nuklear.h https://github.com/floooh/sokol/raw/refs/heads/master/util/sokol_nuklear.h
 	wget -O include/nuklear.h https://github.com/Immediate-Mode-UI/Nuklear/raw/refs/heads/master/nuklear.h
+
+
+debug:
+	@echo $(SHADERS_H)
+
+# shaders
+shaders: src/shader_glsl.h
+
+src/shader_glsl.h: src/shader.glsl
+	sokol-shdc --input $< --output $@ --slang glsl430:hlsl5:metal_macos
 
