@@ -5,7 +5,8 @@ typedef uint32_t Id;
 
 typedef struct {
     Id _id;
-    void *image;
+    char *location;
+    uint8_t *image;
     size_t width;
     size_t height;
     size_t cell_size; // must be a box

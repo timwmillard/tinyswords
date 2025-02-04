@@ -83,10 +83,10 @@ endif
 
 all: $(TARGET)$(OUTEXT)
 
-$(TARGET)$(OUTEXT): src/main.c deps.o src/shader_glsl.h
-	$(CC) -o $@ $< deps.o $(INCS) $(DEFS) $(CFLAGS) $(LIBS)
+$(TARGET)$(OUTEXT): src/main.c sokol.o src/shader_glsl.h
+	$(CC) -o $@ $< sokol.o $(INCS) $(DEFS) $(CFLAGS) $(LIBS)
 
-deps.o: src/deps.c
+sokol.o: src/sokol.c
 	$(CC) -c $< $(INCS) $(DEFS) $(CFLAGS)
 
 run: $(TARGET)$(OUTEXT)
@@ -117,4 +117,13 @@ shaders: src/shader_glsl.h
 
 src/shader_glsl.h: src/shader.glsl
 	sokol-shdc --input $< --output $@ --slang glsl430:hlsl5:metal_macos
+
+.PHONY: assets
+
+assets: src/assets.txt
+
+src/assets.txt: FORCE
+	find assets -name *.png > src/assets.txt
+
+FORCE:
 
