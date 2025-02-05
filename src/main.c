@@ -30,8 +30,9 @@ void frame(void) {
     });
     sg_apply_pipeline(state.pip);
     sg_apply_bindings(&state.bind);
-    sg_draw(0, 3, 1);
+    sg_draw(0, 6, 1);
     sg_end_pass();
+
     sg_commit();
 }
 
@@ -53,9 +54,13 @@ void init(void) {
     });
 
     float vertices[] = {
-         0.0f,  0.5f, 0.5f,     1.0f, 0.0f, 0.0f, 1.0f,
-         0.5f, -0.5f, 0.5f,     0.0f, 1.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, 0.5f,     0.0f, 0.0f, 1.0f, 1.0f,
+        -0.5f, -0.5f, 0.5f,    1.0f, 0.0f, 0.0f, 1.0f,
+        -0.5f,  0.5f, 0.5f,    0.0f, 1.0f, 0.0f, 1.0f,
+        0.5f,  -0.5f, 0.5f,    0.0f, 0.0f, 1.0f, 1.0f,
+ 
+        -0.5f,  0.5f, 0.5f,    0.0f, 1.0f, 0.0f, 1.0f,
+         0.5f, -0.5f, 0.5f,    0.0f, 0.0f, 1.0f, 1.0f,
+         0.5f,  0.5f, 0.5f,    1.0f, 0.0f, 1.0f, 1.0f,
     };
 
     state.bind.vertex_buffers[0] = sg_make_buffer(&(sg_buffer_desc){
@@ -90,6 +95,7 @@ void init(void) {
 
     state.pip = sg_make_pipeline(&(sg_pipeline_desc){
         .shader = sg_make_shader(triangle_shader_desc(sg_query_backend())),
+            /*.primitive_type = SG_PRIMITIVETYPE_LINES,*/
         .layout = {
             .attrs = {
                 /*[ATTR_sprite_pos].format = SG_VERTEXFORMAT_FLOAT3,*/

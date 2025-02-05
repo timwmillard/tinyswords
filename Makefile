@@ -25,10 +25,7 @@ else ifeq ($(platform), linux)
 	endif
 else ifeq ($(platform), macos)
 	CC=clang
-	# Metal
 	LIBS+=-framework Cocoa -framework QuartzCore -framework Metal -framework MetalKit
-	# OpenGL
-	# LIBS+=-framework Cocoa -framework QuartzCore -framework OpenGL
 	CFLAGS+=-ObjC
 else ifeq ($(platform), web)
 	CC=emcc
@@ -80,6 +77,11 @@ else ifeq ($(backend), metal)
 	DEFS+=-DSOKOL_METAL
 else ifeq ($(backend), dummy)
 	DEFS+=-DSOKOL_DUMMY_BACKEND
+endif
+ifeq ($(platform), macos)
+ifeq ($(backend), glcore)
+	LIBS+=-framework OpenGL
+endif
 endif
 
 .PHONY: all run clean update-deps shaders
