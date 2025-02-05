@@ -25,13 +25,16 @@ else ifeq ($(platform), linux)
 	endif
 else ifeq ($(platform), macos)
 	CC=clang
+	# Metal
 	LIBS+=-framework Cocoa -framework QuartzCore -framework Metal -framework MetalKit
+	# OpenGL
+	# LIBS+=-framework Cocoa -framework QuartzCore -framework OpenGL
 	CFLAGS+=-ObjC
 else ifeq ($(platform), web)
 	CC=emcc
 	LIBS+=-sFULL_ES3
 	OUTEXT=.html
-	CFLAGS+=--shell-file=samples/sample-shell.html --embed-file images
+	CFLAGS+=--shell-file=web/shell.html --embed-file assets
 endif
 
 # build type

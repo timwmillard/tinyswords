@@ -8,11 +8,20 @@
 
 #include "shader_glsl.h"
 
+#include "animation.c"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 static struct {
     sg_pipeline pip;
     sg_bindings bind;
     sg_pass_action pass_action;
 } state;
+
+static SpriteSheet sheets[] = {
+    { .location = "assets/fractions.png" },
+};
 
 void frame(void) {
     sg_begin_pass(&(sg_pass){
@@ -38,6 +47,7 @@ void input(const sapp_event* event) {
 }
 
 void init(void) {
+
     sg_setup(&(sg_desc){
         .environment = sglue_environment(),
     });
@@ -45,20 +55,45 @@ void init(void) {
     float vertices[] = {
          0.0f,  0.5f, 0.5f,     1.0f, 0.0f, 0.0f, 1.0f,
          0.5f, -0.5f, 0.5f,     0.0f, 1.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, 0.5f,     0.0f, 0.0f, 1.0f, 1.0f
+        -0.5f, -0.5f, 0.5f,     0.0f, 0.0f, 1.0f, 1.0f,
     };
 
     state.bind.vertex_buffers[0] = sg_make_buffer(&(sg_buffer_desc){
         .data = SG_RANGE(vertices),
     });
     
-    state.bind.images[0] = sg_make_image(&(sg_image_desc){
-    });
+    for (size_t i = 0; i < sizeof(sheets); i++) {
+        int width, height, number_of_channels;
+        stbi_uc *pixels = stbi_load(sheets[i].location, &width, &height, &number_of_channels, 0);
+
+        sheets[i].width = width;
+        sheets[i].height = height;
+        sheets[i].image = pixels;
+
+        if (pixels) {
+            state.bind.images[i] = sg_make_image(&(sg_image_desc){
+                .width = width,
+                .height = height,
+                .pixel_format = SG_PIXELFORMAT_RGBA8,
+                .data.subimage[0][0] = {
+                    .ptr = pixels,
+                    .size = (size_t)(width * height * 4),
+                },
+            });
+
+            state.bind.samplers[i] = sg_make_sampler(&(sg_sampler_desc){
+                .min_filter = SG_FILTER_NEAREST,
+                .mag_filter = SG_FILTER_LINEAR,
+            });
+        }
+    }
 
     state.pip = sg_make_pipeline(&(sg_pipeline_desc){
         .shader = sg_make_shader(triangle_shader_desc(sg_query_backend())),
         .layout = {
             .attrs = {
+                /*[ATTR_sprite_pos].format = SG_VERTEXFORMAT_FLOAT3,*/
+                /*[ATTR_sprite_texcoord0].format = SG_VERTEXFORMAT_SHORT2N,*/
                 [ATTR_triangle_position].format = SG_VERTEXFORMAT_FLOAT3,
                 [ATTR_triangle_color0].format = SG_VERTEXFORMAT_FLOAT4,
             },
